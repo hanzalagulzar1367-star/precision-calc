@@ -7,28 +7,32 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     
     - name: Extract ZIP
       run: |
         if [ -f "PrecisionCalc.zip" ]; then
           unzip PrecisionCalc.zip
-          rm PrecisionCalc.zip
+          mv PrecisionCalc/* . 2>/dev/null || true
+          rm -rf PrecisionCalc.zip PrecisionCalc
         fi
+        ls -la
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
     
     - name: Install dependencies
       run: |
         sudo apt update
         sudo apt install -y openjdk-17-jdk git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev automake build-essential
-        pip install buildozer cython==0.29.33
+        pip install --upgrade pip
+        pip install buildozer==1.5.0
+        pip install cython==0.29.33
     
     - name: Build APK
       run: |
@@ -39,4 +43,3 @@ jobs:
       with:
         name: PrecisionCalc-APK
         path: bin/*.apk
-        retention-days: 30
