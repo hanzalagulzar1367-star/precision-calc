@@ -28,7 +28,7 @@ jobs:
         echo "y" | buildozer android debug deploy run
     
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: PrecisionCalc-APK
         path: bin/*.apk
