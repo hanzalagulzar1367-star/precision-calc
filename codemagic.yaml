@@ -5,7 +5,6 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       java: 17
-      python: 3.11
     triggering:
       events:
         - push
