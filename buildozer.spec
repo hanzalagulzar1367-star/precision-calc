@@ -5,7 +5,7 @@ package.domain = org.hanzala
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 1.0
-requirements = python3==3.8.19,kivy==2.2.1
+requirements = python3,kivy
 orientation = portrait
 fullscreen = 0
 
