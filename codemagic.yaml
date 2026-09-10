@@ -1,0 +1,26 @@
+workflows:
+  android-workflow:
+    name: Build Android APK
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      java: 17
+      python: 3.11
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev automake build-essential
+          pip3 install --upgrade pip
+          pip3 install buildozer cython==0.29.33
+      - name: Build APK
+        script: |
+          echo "y" | buildozer android debug
+    artifacts:
+      - bin/*.apk
