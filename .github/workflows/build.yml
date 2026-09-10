@@ -1,45 +1,57 @@
-name: Build Android APK
+# CELL 60: CIRCLECI - ANOTHER FAST ALTERNATIVE
+import os
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+os.chdir('/content/PrecisionCalc')
+
+# Create CircleCI config
+os.makedirs('.circleci', exist_ok=True)
+
+circleci_config = '''version: 2.1
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    docker:
+      - image: cimg/python:3.9
     
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Extract ZIP
-      run: |
-        if [ -f "PrecisionCalc.zip" ]; then
-          unzip PrecisionCalc.zip
-          mv PrecisionCalc/* . 2>/dev/null || true
-          rm -rf PrecisionCalc.zip PrecisionCalc
-        fi
-        ls -la
-    
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-    
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y openjdk-17-jdk git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev automake build-essential
-        pip install --upgrade pip
-        pip install buildozer==1.5.0
-        pip install cython==0.29.33
-    
-    - name: Build APK
-      run: |
-        echo "y" | buildozer android debug deploy run
-    
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: PrecisionCalc-APK
-        path: bin/*.apk
+      - checkout
+      
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt update
+            sudo apt install -y openjdk-17-jdk git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev automake build-essential
+            pip install buildozer==1.5.0 cython==0.29.33
+      
+      - run:
+          name: Build APK
+          command: |
+            echo "y" | buildozer android debug deploy run
+      
+      - store_artifacts:
+          path: bin
+          destination: apk
+
+workflows:
+  build-apk:
+    jobs:
+      - build
+'''
+
+with open('.circleci/config.yml', 'w') as f:
+    f.write(circleci_config)
+
+print("✅ CircleCI config created!")
+print("""
+======================================================================
+🚀 CIRCLECI - FREE & FAST
+======================================================================
+
+1. Go to: https://circleci.com/signup/
+2. Sign up with GitHub
+3. Add your project
+4. Build starts IMMEDIATELY
+5. Download APK from Artifacts tab
+
+======================================================================
+""")
